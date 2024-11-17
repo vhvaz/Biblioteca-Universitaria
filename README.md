@@ -1,7 +1,9 @@
 Sistema de Biblioteca Universitária
+
 Este projeto é um sistema de gerenciamento para uma biblioteca universitária, desenvolvido para atender às necessidades de cadastro, empréstimos, devoluções, reservas de livros e controle de multas. O objetivo é modernizar o sistema de empréstimos, facilitando o acesso a informações e a gestão das operações da biblioteca.
 
 Conteúdo do Repositório
+
 BibliotecaUniversitaria.sql: Script SQL contendo a criação do banco de dados, inserção de dados (DDL e DML) e consultas avançadas (DQL).
 Diagrama_Relacional.png: Diagrama relacional das tabelas e seus relacionamentos.
 Estrutura do Sistema
@@ -36,10 +38,12 @@ id_livro (FK): Relacionado ao livro reservado.
 data_reserva: Data em que a reserva foi realizada.
 status_reserva: Status da reserva (Ativa, Finalizada).
 Funcionalidades Implementadas
+
 Cadastro:
 
 Cadastro de usuários com tipos diferenciados.
 Cadastro de livros com categorias específicas.
+
 Gestão de Empréstimos:
 
 Registro de empréstimos com datas e controle de devoluções.
@@ -47,17 +51,19 @@ Cálculo de multas baseado na data de devolução.
 Gestão de Reservas:
 
 Registro de reservas com status e vínculo ao usuário e livro.
+
 Relatórios:
 
 Livros mais emprestados.
 Reservas ativas por usuário.
 Controle de multas por usuário.
-Diagrama Relacional
+
+**Diagrama Relacional**
+
 ![image](https://github.com/user-attachments/assets/efe26b1c-1d24-47f9-ba7f-935cca80d883)
 
 
 Consultas Avançadas (DQL)
-Exemplos de consultas realizadas no sistema:
 
 Livros mais emprestados:
 
