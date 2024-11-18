@@ -4,45 +4,107 @@ Este projeto é um sistema de gerenciamento para uma biblioteca universitária, 
 
 ---
 
-## Conteúdo do Repositório
+## **Conteúdo do Repositório**
 
-- **BibliotecaUniversitaria.sql**: Script SQL contendo a criação do banco de dados, inserção de dados (DDL e DML) e consultas avançadas (DQL).
+- **BibliotecaUniversitaria.sql**: Script SQL contendo a criação do banco de dados, inserção de dados e consultas avançadas.
+- **Biblioteca_Logico.puml**: Diagrama lógico do sistema em formato PlantUML.
+- **Biblioteca_CasoDeUso.puml**: Diagrama de caso de uso em formato PlantUML.
 - **Diagrama Relacional**: Diagrama relacional das tabelas e seus relacionamentos.
 
 ---
 
-## Estrutura do Sistema
+## **Estrutura do Sistema**
 
-### Entidades e Atributos
+### **Entidades e Atributos**
 
-#### **Usuarios**
-- `id_usuario (PK)`: Identificador único do usuário.
+#### **Usuario**
+- `id (PK)`: Identificador único do usuário.
 - `nome`: Nome completo do usuário.
-- `tipo_usuario`: Tipo de usuário (`Aluno`, `Professor`, `Funcionario`).
-- `telefone`: Contato telefônico do usuário.
-- `email`: Endereço de email do usuário.
+- `tipo`: Tipo de usuário (`Aluno`, `Professor`, `Funcionario`).
+- `endereco`: Endereço completo do usuário.
+- `telefone`: Número de telefone do usuário.
 
-#### **Livros**
-- `id_livro (PK)`: Identificador único do livro.
+#### **Categoria**
+- `id (PK)`: Identificador único da categoria.
+- `nome`: Nome da categoria do livro.
+
+#### **Livro**
+- `id (PK)`: Identificador único do livro.
 - `titulo`: Título do livro.
 - `autor`: Nome do autor do livro.
-- `isbn`: Número ISBN do livro.
-- `categoria`: Categoria do livro (`Ficcao`, `Ciencia`, `Historia`, `Outros`).
+- `ISBN`: Número ISBN do livro.
+- `categoria_id (FK)`: Relacionamento com a tabela `Categoria`.
 
-#### **Emprestimos**
-- `id_emprestimo (PK)`: Identificador único do empréstimo.
-- `id_usuario (FK)`: Relacionado ao usuário que realizou o empréstimo.
-- `id_livro (FK)`: Relacionado ao livro emprestado.
+#### **Emprestimo**
+- `id (PK)`: Identificador único do empréstimo.
 - `data_emprestimo`: Data do empréstimo.
 - `data_devolucao`: Data prevista para devolução.
-- `multa`: Valor da multa, caso aplicável.
+- `multa`: Valor da multa associada (se aplicável).
+- `usuario_id (FK)`: Relacionamento com a tabela `Usuario`.
+- `livro_id (FK)`: Relacionamento com a tabela `Livro`.
 
-#### **Reservas**
-- `id_reserva (PK)`: Identificador único da reserva.
-- `id_usuario (FK)`: Relacionado ao usuário que realizou a reserva.
-- `id_livro (FK)`: Relacionado ao livro reservado.
-- `data_reserva`: Data em que a reserva foi realizada.
-- `status_reserva`: Status da reserva (`Ativa`, `Finalizada`).
+#### **Reserva**
+- `id (PK)`: Identificador único da reserva.
+- `data_reserva`: Data da reserva.
+- `livro_id (FK)`: Relacionamento com a tabela `Livro`.
+- `usuario_id (FK)`: Relacionamento com a tabela `Usuario`.
+
+---
+
+## **Diagrama Lógico**
+
+O diagrama lógico do sistema pode ser renderizado a partir do arquivo `Biblioteca_Logico.puml`. Veja uma prévia abaixo:
+
+```plantuml
+@startuml SistemaDeBibliotecaLogico
+entity "Usuario" as usuario {
+    +id : INT
+    nome : VARCHAR(100)
+    tipo : ENUM('Aluno', 'Professor', 'Funcionario')
+    endereco : VARCHAR(255)
+    telefone : VARCHAR(20)
+}
+
+entity "Categoria" as categoria {
+    +id : INT
+    nome : VARCHAR(50)
+}
+
+entity "Livro" as livro {
+    +id : INT
+    titulo : VARCHAR(255)
+    autor : VARCHAR(100)
+    ISBN : VARCHAR(20)
+    categoria_id : INT
+}
+
+entity "Emprestimo" as emprestimo {
+    +id : INT
+    data_emprestimo : DATE
+    data_devolucao : DATE
+    multa : FLOAT
+    usuario_id : INT
+    livro_id : INT
+}
+
+entity "Reserva" as reserva {
+    +id : INT
+    data_reserva : DATE
+    livro_id : INT
+    usuario_id : INT
+}
+
+usuario ||--o{ emprestimo : realiza
+livro ||--o{ emprestimo : emprestado
+categoria ||--o{ livro : categoriza
+usuario ||--o{ reserva : realiza
+livro ||--o{ reserva : reservado
+@enduml
+```
+---
+
+### Diagrama de Caso de Uso
+O diagrama de caso de uso pode ser renderizado a partir do arquivo Biblioteca_CasoDeUso.puml. Ele inclui os atores e funcionalidades do sistema, como "Empréstimo de Livro" e "Controle de Multas".
 
 ---
 
@@ -72,44 +134,62 @@ Este projeto é um sistema de gerenciamento para uma biblioteca universitária, 
 
 ## Consultas Avançadas (DQL)
 
-### Livros mais emprestados
+### Consultar todos os livros e suas categorias
 ```sql
-SELECT Livros.titulo, COUNT(Emprestimos.id_emprestimo) AS emprestimos
-FROM Livros
-LEFT JOIN Emprestimos ON Livros.id_livro = Emprestimos.id_livro
-GROUP BY Livros.id_livro
-ORDER BY emprestimos DESC;
+SELECT Livro.titulo, Categoria.nome 
+FROM Livro 
+JOIN Categoria ON Livro.categoria_id = Categoria.id;
+
 ```
 
 ---
 
-### Reservas ativas por usuário
+### Consultar empréstimos de um usuário específico
 ```sql
 
-SELECT Usuarios.nome, COUNT(Reservas.id_reserva) AS reservas_ativas
-FROM Usuarios
-INNER JOIN Reservas ON Usuarios.id_usuario = Reservas.id_usuario
-WHERE Reservas.status_reserva = 'Ativa'
-GROUP BY Usuarios.id_usuario;
+SELECT Emprestimo.id, Livro.titulo, Emprestimo.data_emprestimo, Emprestimo.data_devolucao 
+FROM Emprestimo
+JOIN Livro ON Emprestimo.livro_id = Livro.id
+WHERE Emprestimo.usuario_id = 1;
+
 ```
 ---
 
-### Controle de multas por usuário
+### Consultar usuários com reservas ativas
 ```sql
 
-SELECT Usuarios.nome, SUM(Emprestimos.multa) AS total_multas
-FROM Usuarios
-INNER JOIN Emprestimos ON Usuarios.id_usuario = Emprestimos.id_usuario
-GROUP BY Usuarios.id_usuario;
+SELECT Usuario.nome, Livro.titulo, Reserva.data_reserva
+FROM Reserva
+JOIN Usuario ON Reserva.usuario_id = Usuario.id
+JOIN Livro ON Reserva.livro_id = Livro.id;
+
 ```
+### Consultar multa acumulada por usuário
+```sql
+SELECT Usuario.nome, SUM(Emprestimo.multa) AS total_multa
+FROM Emprestimo
+JOIN Usuario ON Emprestimo.usuario_id = Usuario.id
+GROUP BY Usuario.id;
+```
+
 ---
 
 ### Como Usar
+
+Como Renderizar os Diagramas
+Faça o download dos arquivos .puml:
+
+Biblioteca_Logico.puml
+[Biblioteca_CasoDeUso.puml)
+Acesse o PlantUML Online Renderer.
+
+Faça o upload dos arquivos para visualizar os diagramas.
+
+
 Faça o download ou clone o repositório:
 
-bash
-Copiar código
 git clone https://github.com/vhvaz/biblioteca-universitaria-sql.git
+
 Importe o arquivo BibliotecaUniversitaria.sql no seu banco de dados MySQL ou MariaDB.
 
 Utilize os exemplos de consultas ou crie suas próprias queries para explorar os dados.
