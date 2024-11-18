@@ -1,0 +1,45 @@
+
+@startuml SistemaDeBibliotecaLogico
+entity "Usuario" as usuario {
+    +id : INT
+    nome : VARCHAR(100)
+    tipo : ENUM('Aluno', 'Professor', 'Funcionario')
+    endereco : VARCHAR(255)
+    telefone : VARCHAR(20)
+}
+
+entity "Categoria" as categoria {
+    +id : INT
+    nome : VARCHAR(50)
+}
+
+entity "Livro" as livro {
+    +id : INT
+    titulo : VARCHAR(255)
+    autor : VARCHAR(100)
+    ISBN : VARCHAR(20)
+    categoria_id : INT
+}
+
+entity "Emprestimo" as emprestimo {
+    +id : INT
+    data_emprestimo : DATE
+    data_devolucao : DATE
+    multa : FLOAT
+    usuario_id : INT
+    livro_id : INT
+}
+
+entity "Reserva" as reserva {
+    +id : INT
+    data_reserva : DATE
+    livro_id : INT
+    usuario_id : INT
+}
+
+usuario ||--o{ emprestimo : realiza
+livro ||--o{ emprestimo : emprestado
+categoria ||--o{ livro : categoriza
+usuario ||--o{ reserva : realiza
+livro ||--o{ reserva : reservado
+@enduml

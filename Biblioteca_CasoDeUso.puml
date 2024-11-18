@@ -1,0 +1,31 @@
+
+@startuml SistemaDeBibliotecaCasoDeUso
+left to right direction
+actor "Usuário" as user
+actor "Bibliotecário" as librarian
+actor "Administrador" as admin
+
+rectangle "Biblioteca" {
+    usecase "Cadastro de Usuários" as UC1
+    usecase "Cadastro de Livros" as UC2
+    usecase "Empréstimo de Livro" as UC3
+    usecase "Devolução de Livro" as UC4
+    usecase "Reserva de Livro" as UC5
+    usecase "Controle de Multas" as UC6
+    usecase "Relatório de Empréstimos" as UC7
+}
+
+user --> UC3 : Realizar
+user --> UC4 : Realizar
+user --> UC5 : Solicitar
+
+UC1 <-- librarian : Gerenciar
+UC2 <-- librarian : Gerenciar
+UC3 <-- librarian : Autorizar
+UC4 <-- librarian : Registrar
+UC5 <-- librarian : Confirmar
+UC6 <-- librarian : Aplicar
+
+UC1 <-- admin : Gerenciar
+UC7 <-- admin : Gerar
+@enduml
